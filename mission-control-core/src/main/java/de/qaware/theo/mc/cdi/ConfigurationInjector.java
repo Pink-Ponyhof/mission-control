@@ -1,4 +1,4 @@
-package de.qaware.theo.mc;
+package de.qaware.theo.mc.cdi;
 
 import de.qaware.theo.mc.annotation.Configuration;
 
@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 
 /**
  * @author andreas.janning
+ * @see <a href="https://docs.jboss.org/weld/reference/latest/en-US/html/extend.html">Extension reference</a>
  */
 public class ConfigurationInjector implements Extension {
 
@@ -57,7 +58,7 @@ public class ConfigurationInjector implements Extension {
 
         @Override
         public Set<Annotation> getQualifiers() {
-            Set<Annotation> qualifiers = new HashSet<Annotation>();
+            Set<Annotation> qualifiers = new HashSet<>();
             qualifiers.add( new AnnotationLiteral<Default>() {} );
             qualifiers.add( new AnnotationLiteral<Any>() {} );
 
