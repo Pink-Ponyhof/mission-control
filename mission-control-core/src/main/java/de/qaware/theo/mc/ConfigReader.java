@@ -16,9 +16,5 @@ public class ConfigReader {
     private Properties properties;
 
     public ConfigReader(String file) {
-        properties = new Properties();
-        Path path = Paths.get(file);
-        InputStream is = Files.newInputStream(path);
-        new InputStreamReader(is, Charset.forName())
     }
 }
