@@ -12,5 +12,6 @@ import java.lang.annotation.*;
 @Singleton
 public @interface Configuration {
 
+    String name();
     String file();
 }

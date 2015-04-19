@@ -4,15 +4,14 @@ import de.qaware.theo.mc.annotation.ConfigKey;
 import de.qaware.theo.mc.annotation.Configuration;
 
 /**
- * @author andreas.janning
+ * @author s.wittke
  */
-@Configuration(name = "fancy", file = "O:/tmpWork/tesfile.properties")
-public interface ConfigInterface {
+@Configuration(name = "ponyConfig", file = "O:/tmpWork/moreproperties.txt")
+public interface AnotherInterface {
 
     @ConfigKey(key="first.value")
     public String getValue();
 
-    @ConfigKey(key="second.value")
+    @ConfigKey(key="distinct.key.from.other.config")
     public String getAnotherValue();
-
 }

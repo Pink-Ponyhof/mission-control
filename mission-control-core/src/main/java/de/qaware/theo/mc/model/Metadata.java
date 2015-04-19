@@ -30,4 +30,13 @@ public class Metadata {
     public List<String> getKeys() {
         return keys;
     }
+
+    @Override
+    public String toString() {
+        return "Metadata{" +
+                "name='" + name + '\'' +
+                ", fileName='" + fileName + '\'' +
+                ", keys=" + keys +
+                '}';
+    }
 }
