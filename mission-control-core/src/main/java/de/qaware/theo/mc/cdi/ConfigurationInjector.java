@@ -1,22 +1,13 @@
 package de.qaware.theo.mc.cdi;
 
+import de.qaware.theo.mc.MissionController;
+import de.qaware.theo.mc.annotation.ConfigKey;
 import de.qaware.theo.mc.annotation.Configuration;
+import de.qaware.theo.mc.model.Metadata;
 
-import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.*;
-import javax.enterprise.util.AnnotationLiteral;
-import javax.inject.Singleton;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -27,92 +18,47 @@ public class ConfigurationInjector implements Extension {
 
     public static final Logger LOGGER = Logger.getLogger(ConfigurationInjector.class.getName());
 
-    private AnnotatedType<?> annotatedType;
+    private Map<AnnotatedType<?>,Metadata> configs = new HashMap<>();
+    private MissionController missionController = new MissionController();
 
     <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) {
-        LOGGER.info("scanning type: " + pat.getAnnotatedType().getJavaClass().getName());
+        AnnotatedType<T> annotatedType = pat.getAnnotatedType();
 
-        if (pat.getAnnotatedType().getAnnotation(Configuration.class) != null) {
-            LOGGER.info("Found it!");
-            annotatedType = pat.getAnnotatedType();
+        LOGGER.info("scanning type: " + annotatedType.getJavaClass().getName());
+
+        Configuration configuration = annotatedType.getAnnotation(Configuration.class);
+        if (configuration != null) {
+            LOGGER.info("Found configuration annotation!");
+
+            List<String> keys = new ArrayList<>();
+            String name = configuration.name();
+            String file = configuration.file();
+
+            LOGGER.info("Configuration has name " + name + " and refers to file " + file);
+
+            Set<AnnotatedMethod<? super T>> methods = annotatedType.getMethods();
+            for (AnnotatedMethod method : methods) {
+                ConfigKey configKey = method.getAnnotation(ConfigKey.class);
+                if (configKey != null) {
+                    keys.add(configKey.key());
+                    LOGGER.info("added key " + configKey.key() + " to list of keys for configuration " + name);
+                }
+            }
+
+            Metadata metadata = new Metadata(name, file, keys);
+            configs.put(annotatedType, metadata);
+            missionController.addMetadata(metadata);
         }
 
     }
 
     void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager bm) {
-        abd.addBean(new ConfigurationProxy(annotatedType));
+        for (Map.Entry<AnnotatedType<?>, Metadata> entry : configs.entrySet()) {
+            abd.addBean(new ConfigurationProxy(entry.getKey(), entry.getValue()));
+            LOGGER.info("Added bean as proxy for " + entry.getKey());
+        }
+        abd.addBean(new MissionControlBean(missionController));
+        LOGGER.info("Added mission controller bean");
     }
 
-    private static class ConfigurationProxy implements Bean {
-
-        private final AnnotatedType type;
-
-        private ConfigurationProxy(AnnotatedType type) {
-            this.type = type;
-        }
-
-        @Override
-        public Set<Type> getTypes() {
-            return type.getTypeClosure();
-        }
-
-        @Override
-        public Set<Annotation> getQualifiers() {
-            Set<Annotation> qualifiers = new HashSet<>();
-            qualifiers.add( new AnnotationLiteral<Default>() {} );
-            qualifiers.add( new AnnotationLiteral<Any>() {} );
-
-            return qualifiers;
-        }
-
-        @Override
-        public Class<? extends Annotation> getScope() {
-            return Singleton.class;
-        }
-
-        @Override
-        public String getName() {
-            return "config";
-        }
-
-        @Override
-        public Set<Class<? extends Annotation>> getStereotypes() {
-            return Collections.emptySet();
-        }
-
-        @Override
-        public Class<?> getBeanClass() {
-            return type.getJavaClass();
-        }
-
-        @Override
-        public boolean isAlternative() {
-            return false;
-        }
-
-        @Override
-        public boolean isNullable() {
-            return false;
-        }
-
-        @Override
-        public Set<InjectionPoint> getInjectionPoints() {
-            return Collections.emptySet();
-        }
-
-        @Override
-        public Object create(CreationalContext creationalContext) {
-            return Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{type.getJavaClass()}, new InvocationHandler() {
-                @Override
-                public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                    return "Hello World!";
-                }
-            });
-        }
-
-        @Override
-        public void destroy(Object instance, CreationalContext creationalContext) {
-
-        }
-    }
 }
