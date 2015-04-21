@@ -19,6 +19,14 @@
         dataType: 'json',
         url: ''
     }).done(function (data) {
+        var configurations = $('#configurations');
+        configurations.empty();
+        $.each(data.configuration, function (i, conf) {
+            console.log(conf);
+            configurations.append("<p>");
+            configurations.append("<a href='" + conf.href + "'>" + conf.name + "</a>");
+            configurations.append("</p>");
+        });
         console.log(data);
     })
 </script>
