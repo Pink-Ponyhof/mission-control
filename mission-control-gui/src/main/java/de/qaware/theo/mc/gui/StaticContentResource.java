@@ -15,17 +15,26 @@ import java.util.Calendar;
 @Path("/static")
 public class StaticContentResource {
 
-    @Path("{path:.*}")
+    @Path("{path:js/.*}")
     @GET
-    public Response serveStaticResource(@PathParam("path") String path) {
+    public Response serveJavascript(@PathParam("path") String path) {
+        return serveStaticResource(path, "application/javascript");
+    }
+
+    @Path("{path:html/.*}")
+    @GET
+    public Response serveHtml(@PathParam("path") String path) {
+        return serveStaticResource(path, "text/html");
+    }
+
+    private Response serveStaticResource(@PathParam("path") String path, String contentTyope) {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         InputStream is = cl.getResourceAsStream("static/" + path);
         if (is == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-
         Calendar expires = Calendar.getInstance();
         expires.add(Calendar.YEAR, 1);
-        return Response.ok(is, "application/javascript").expires(expires.getTime()).build();
+        return Response.ok(is, contentTyope).expires(expires.getTime()).build();
     }
 }

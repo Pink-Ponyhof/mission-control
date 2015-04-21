@@ -41,10 +41,4 @@ public class OverviewResource {
         return result;
     }
 
-    @GET
-    @Produces("text/html")
-    public InputStream getOverviewHtml() {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        return cl.getResourceAsStream("html/Overview.html");
-    }
 }
