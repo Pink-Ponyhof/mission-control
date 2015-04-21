@@ -24,7 +24,7 @@
         $.each(data.configuration, function (i, conf) {
             console.log(conf);
             configurations.append("<p>");
-            configurations.append("<a href='" + conf.href + "'>" + conf.name + "</a>");
+            configurations.append("<a href='Configuration.html?configName=" + conf.name + "'>" + conf.name + "</a>");
             configurations.append("</p>");
         });
         console.log(data);
