@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Mission Control - Configuration Overview</title>
+    <script type="text/javascript" src="static/js/jquery-2.1.3.min.js"></script>
+</head>
+<body>
+<h1>Mission Control</h1>
+
+<h2>Configuration Overview</h2>
+
+<div id="configurations">
+
+</div>
+<script type="application/javascript">
+    $.ajax({
+        type: 'GET',
+        dataType: 'json',
+        url: ''
+    }).done(function (data) {
+        console.log(data);
+    })
+</script>
+</body>
+</html>
