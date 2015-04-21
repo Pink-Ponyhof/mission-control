@@ -19,6 +19,7 @@ public class McRsApplication extends Application {
     public Set<Class<?>> getClasses() {
         Set<Class<?>> classes = new HashSet<>();
         classes.add(OverviewResource.class);
+        classes.add(ConfigurationResource.class);
         classes.add(StaticContentResource.class);
         return classes;
     }
