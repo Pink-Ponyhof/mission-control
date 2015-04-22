@@ -1,7 +1,6 @@
 package de.qaware.theo.mc.cdi;
 
 
-import com.sun.management.MissionControl;
 import de.qaware.theo.mc.MissionController;
 
 import javax.enterprise.context.spi.CreationalContext;
@@ -35,6 +34,9 @@ public class MissionControlBean implements Bean {
         return types;
     }
 
+    /**
+     * @return default qualifiers
+     */
     @Override
     public Set<Annotation> getQualifiers() {
         Set<Annotation> qualifiers = new HashSet<>();
@@ -44,6 +46,9 @@ public class MissionControlBean implements Bean {
         return qualifiers;
     }
 
+    /**
+     * @return Singleton.class
+     */
     @Override
     public Class<? extends Annotation> getScope() {
         return Singleton.class;
@@ -54,6 +59,9 @@ public class MissionControlBean implements Bean {
         return "MC_MissionControl";
     }
 
+    /**
+     * @return no stereotypes necessary
+     */
     @Override
     public Set<Class<? extends Annotation>> getStereotypes() {
         return Collections.emptySet();
@@ -79,6 +87,9 @@ public class MissionControlBean implements Bean {
         return Collections.emptySet();
     }
 
+    /**
+     * @return the {@link de.qaware.theo.mc.MissionController} object to call methods on it
+     */
     @Override
     public Object create(CreationalContext creationalContext) {
         return missionController;

@@ -3,6 +3,7 @@ package de.qaware.theo.mc;
 import de.qaware.theo.mc.model.Metadata;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,20 +12,22 @@ import java.util.Map;
  */
 public class MissionController {
 
-    private List<Metadata> metadataList = new ArrayList<>();
+    private Map<String, Metadata> metadataList = new HashMap<>();
 
     public MissionController() {
     }
 
     public void addMetadata(Metadata metadata) {
-        metadataList.add(metadata);
+        metadataList.put(metadata.getName(), metadata);
     }
 
     public List<Metadata> allConfigMetadata() {
-        return metadataList;
+        return new ArrayList<>(metadataList.values());
     }
 
     public Map<String, String> getConfigValues(String configName) {
+        Metadata metadata = metadataList.get(configName);
+
         throw new UnsupportedOperationException("not yet implemented");
     }
 

@@ -21,6 +21,10 @@ public class ConfigurationInjector implements Extension {
     private Map<AnnotatedType<?>,Metadata> configs = new HashMap<>();
     private MissionController missionController = new MissionController();
 
+    /**
+     * @param pat
+     * @param <T>
+     */
     <T> void processAnnotatedType(@Observes ProcessAnnotatedType<T> pat) {
         AnnotatedType<T> annotatedType = pat.getAnnotatedType();
 
@@ -49,9 +53,11 @@ public class ConfigurationInjector implements Extension {
             configs.put(annotatedType, metadata);
             missionController.addMetadata(metadata);
         }
-
     }
 
+    /**
+     * Add all config beans and the mission controller bean s.th. they can be injected in the application
+     */
     void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager bm) {
         for (Map.Entry<AnnotatedType<?>, Metadata> entry : configs.entrySet()) {
             abd.addBean(new ConfigurationProxy(entry.getKey(), entry.getValue()));

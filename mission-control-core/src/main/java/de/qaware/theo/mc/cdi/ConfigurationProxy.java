@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * The bean implementation that can be injected.
+ * Proxies all actions to a config proxy.
 * @author s.wittke
 */
 public class ConfigurationProxy implements Bean {
