@@ -12,21 +12,21 @@ import java.util.Map;
  */
 public class MissionController {
 
-    private Map<String, Metadata> metadataList = new HashMap<>();
+    private Map<String, Metadata> metadataMap = new HashMap<>();
 
     public MissionController() {
     }
 
     public void addMetadata(Metadata metadata) {
-        metadataList.put(metadata.getName(), metadata);
+        metadataMap.put(metadata.getName(), metadata);
     }
 
     public List<Metadata> allConfigMetadata() {
-        return new ArrayList<>(metadataList.values());
+        return new ArrayList<>(metadataMap.values());
     }
 
     public Map<String, String> getConfigValues(String configName) {
-        Metadata metadata = metadataList.get(configName);
+        Metadata metadata = metadataMap.get(configName);
 
         throw new UnsupportedOperationException("not yet implemented");
     }
