@@ -1,5 +1,6 @@
 package de.qaware.theo.mc.gui;
 
+import de.qaware.theo.mc.ConfigurationNotAccessibleException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,7 +35,7 @@ public class ConfigurationResource {
     private Map<String, Map<String, String>> allConfigurations;
 
     @PostConstruct
-    public void init() {
+    public void init() throws ConfigurationNotAccessibleException {
         List<Metadata> metadatas = missionController.allConfigMetadata();
 
         allConfigurations = new HashMap<>(metadatas.size());
