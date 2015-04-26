@@ -34,7 +34,8 @@
             container.empty();
             $.each(data, function (i, conf) {
                 var anchor = $('<a>').text(conf.name).attr('href', '#').click(function () {
-                    displayConfig(conf.name)
+                    configName = conf.name;
+                    displayConfig(configName);
                 });
                 console.log(conf);
                 container.append("<p>");
