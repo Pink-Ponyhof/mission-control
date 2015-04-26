@@ -54,8 +54,10 @@ public class PropertiesReader {
         Properties properties = new Properties();
         propertiesMap.clear();
         for (String key : metadata.getKeys()) {
-            properties.setProperty(key, "");
-            propertiesMap.put(key, "");
+            if (metadata.getKeys().contains(key)) {
+                properties.setProperty(key, "");
+                propertiesMap.put(key, "");
+            }
         }
         return properties;
     }

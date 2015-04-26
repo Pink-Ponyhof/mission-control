@@ -13,7 +13,6 @@ import java.util.List;
 /**
  * @author andreas.janning
  */
-@SuppressWarnings("ALL")
 @Path("/test")
 @Singleton
 public class TestRest {
