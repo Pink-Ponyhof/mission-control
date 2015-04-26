@@ -64,7 +64,12 @@ public class ConfigurationResource {
         Map<String, String> configuration = objectMapper.readValue(jsonString, new TypeReference<Map<String, String>>() {
         });
 
-        System.out.println("The values: " + configuration);
-        return Response.ok().build();
+        if (!allConfigurations.containsKey(name)) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        allConfigurations.put(name, configuration);
+
+        DataModel entity = new DataModel(name, configuration);
+        return Response.ok(objectMapper.writeValueAsBytes(entity)).build();
     }
 }

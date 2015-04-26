@@ -59,7 +59,7 @@
             $.each(data.configValues, function (key, value) {
                 var div = $('<div>');
                 div.append($('<label>').text(key).attr('for', 'input_' + key));
-                div.append($('<input type="text" class="configInput">').attr('id', 'input_' + key).text(value));
+                div.append($('<input type="text" class="configInput">').attr('id', 'input_' + key).attr('value', value));
                 form.append(div);
             });
             form.append($('<input type="button">').attr('value', 'submit').click(postConfig));
@@ -101,7 +101,9 @@
 
         $('.configInput').each(function (i, val) {
             val = $(val);
-            data[val.attr('id')] = val.val();
+            var id = val.attr('id');
+            var key = id.substr(id.indexOf('_') + 1);
+            data[key] = val.val();
         });
         console.log(data);
         $.ajax({
