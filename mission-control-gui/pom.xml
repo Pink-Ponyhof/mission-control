@@ -12,6 +12,14 @@
 
     <artifactId>mission-control-gui</artifactId>
 
+    <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/target/generated-resources</directory>
+            </resource>
+        </resources>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>de.qaware.theo.mission-control</groupId>

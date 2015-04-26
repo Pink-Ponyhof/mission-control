@@ -4,8 +4,6 @@ import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.CacheControl;
-import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
 import java.util.Calendar;
@@ -37,6 +35,8 @@ public class StaticContentResource {
         }
         Calendar expires = Calendar.getInstance();
         expires.add(Calendar.YEAR, 1);
-        return Response.ok(is, contentTyope).expires(expires.getTime()).build();
+        return Response.ok(is, contentTyope)
+//                .expires(expires.getTime())
+                .build();
     }
 }
