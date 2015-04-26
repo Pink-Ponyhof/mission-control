@@ -1,5 +1,6 @@
 package de.qaware.theo.mc.gui;
 
+import de.qaware.theo.mc.ConfigurationNotAccessibleException;
 import de.qaware.theo.mc.MissionController;
 import de.qaware.theo.mc.gui.model.DataModel;
 import de.qaware.theo.mc.model.Metadata;
@@ -31,7 +32,7 @@ public class ConfigurationResource {
     private Map<String, Map<String, String>> allConfigurations;
 
     @PostConstruct
-    public void init() {
+    public void init() throws ConfigurationNotAccessibleException {
         List<Metadata> metadatas = missionController.allConfigMetadata();
 
         allConfigurations = new HashMap<>(metadatas.size());

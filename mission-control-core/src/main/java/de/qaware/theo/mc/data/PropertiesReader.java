@@ -87,17 +87,20 @@ public class PropertiesReader {
             Properties properties = new Properties();
             properties.load(in);
 
-            for (String key : properties.stringPropertyNames()) {
-                if (metadata.getKeys().contains(key)) {
-                    propertiesMap.put(key, properties.getProperty(key));
-
-                }
-            }
+            initMap(properties);
         }
         finally {
             if (in != null) {
                 in.close();
                 inputStream.close();
+            }
+        }
+    }
+
+    private void initMap(Properties properties) {
+        for (String key : properties.stringPropertyNames()) {
+            if (metadata.getKeys().contains(key)) {
+                propertiesMap.put(key, properties.getProperty(key));
             }
         }
     }

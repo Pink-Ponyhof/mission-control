@@ -27,7 +27,7 @@ public class MissionController {
         return new ArrayList<>(metadataMap.values());
     }
 
-    public Map<String, String> getConfigValues(String configName) {
+    public Map<String, String> getConfigValues(String configName) throws ConfigurationNotAccessibleException {
         ConfigStore configStore = configStoreMap.get(configName);
         if (configStore != null) {
             return configStore.getConfigValues();
