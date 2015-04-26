@@ -6,7 +6,7 @@ import de.qaware.theo.mc.annotation.Configuration;
 /**
  * @author andreas.janning
  */
-@Configuration(name = "fancy", file = "O:/tmpWork/tesfile.properties")
+@Configuration(name = "fancy", file = "O:/tmpWork/testfile.properties")
 public interface ConfigInterface {
 
     @ConfigKey(key="first.value")

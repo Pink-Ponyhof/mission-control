@@ -1,6 +1,9 @@
 package de.qaware.theo.mc.cdi;
 
+import de.qaware.theo.mc.ConfigStore;
+import de.qaware.theo.mc.annotation.ConfigKey;
 import de.qaware.theo.mc.model.Metadata;
+import de.qaware.theo.mc.store.PropertiesStore;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Any;
@@ -18,6 +21,7 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * The bean implementation that can be injected.
@@ -26,12 +30,17 @@ import java.util.Set;
 */
 public class ConfigurationProxy implements Bean {
 
+    public static final Logger LOGGER = Logger.getLogger(ConfigurationProxy.class.getName());
+
     private final AnnotatedType type;
+
     private final Metadata metadata;
+    private ConfigStore store;
 
     ConfigurationProxy(AnnotatedType type, Metadata metadata) {
         this.type = type;
         this.metadata = metadata;
+        this.store = new PropertiesStore(metadata);
     }
 
     @Override
@@ -88,7 +97,18 @@ public class ConfigurationProxy implements Bean {
         return Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{type.getJavaClass()}, new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                return "Hello World!";
+
+                //check which method was invoked
+                ConfigKey configKey = method.getAnnotation(ConfigKey.class);
+                if (configKey != null) {
+                    LOGGER.info("Found config key annotation on invoked method.");
+
+                    String requestedKey = configKey.key();
+                    return store.getConfigValue(requestedKey);
+
+                } else {
+                    throw new IllegalStateException("Invoked method " + method + "  does not have a config key annotation.");
+                }
             }
         });
     }

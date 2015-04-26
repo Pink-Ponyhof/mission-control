@@ -7,8 +7,10 @@ import java.util.Map;
  */
 public interface ConfigStore {
 
-    Map<String, String> getConfigValues(String configName);
+    Map<String, String> getConfigValues();
 
-    void setConfigValues(String configName, Map<String, String> newValues);
+    String getConfigValue(String key);
+
+    void setConfigValues(Map<String, String> newValues);
 
 }

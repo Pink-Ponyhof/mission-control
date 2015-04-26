@@ -10,8 +10,8 @@ import de.qaware.theo.mc.annotation.Configuration;
 public interface AnotherInterface {
 
     @ConfigKey(key="first.value")
-    public String getValue();
+    String getValue();
 
     @ConfigKey(key="distinct.key.from.other.config")
-    public String getAnotherValue();
+    String getAnotherValue();
 }
