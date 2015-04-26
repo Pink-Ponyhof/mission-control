@@ -32,7 +32,7 @@
             $('#header').html('Configuration Overview');
             var container = $('#container');
             container.empty();
-            $.each(data.configuration, function (i, conf) {
+            $.each(data, function (i, conf) {
                 var anchor = $('<a>').text(conf.name).attr('href', '#').click(function () {
                     displayConfig(conf.name)
                 });
@@ -54,23 +54,28 @@
             $('#header').html(configName);
             var container = $('#container');
             container.empty();
-            $.each(data.keyValueMap.entry, function (i, obj) {
-                container.append("<p>");
-                container.append("name : " + obj.key + " value: " + obj.value);
-                container.append("</p>");
+            var form = $('<form>').attr('id', 'configForm');
+
+            $.each(data.configValues, function (key, value) {
+                var div = $('<div>');
+                div.append($('<label>').text(key).attr('for', 'input_' + key));
+                div.append($('<input type="text" class="configInput">').attr('id', 'input_' + key).text(value));
+                form.append(div);
             });
+            form.append($('<input type="button">').attr('value', 'submit').click(postConfig));
+            container.append(form);
             container.append('<p>');
             container.append($('<a>').text('back').attr('href', '#').click(function () {
                 displayOverview()
             }));
             container.append('</p>');
             console.log(data);
-        }).fail(function(data){
+        }).fail(function (data) {
             $('#header').html('Error');
             var container = $('#container');
             container.empty();
             container.append("<p>");
-            container.append("configuration '" +configName + "' not found");
+            container.append("configuration '" + configName + "' not found");
             container.append("</p>");
             container.append('<p>');
             container.append($('<a>').text('back').attr('href', '#').click(function () {
@@ -89,6 +94,25 @@
                 return sParameterName[1];
             }
         }
+    }
+
+    function postConfig() {
+        var data = {};
+
+        $('.configInput').each(function (i, val) {
+            val = $(val);
+            data[val.attr('id')] = val.val();
+        });
+        console.log(data);
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            url: '../../' + configName,
+            data: JSON.stringify(data)
+        }).done(function () {
+            console.log("sucess!");
+        });
     }
 
 </script>

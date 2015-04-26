@@ -32,6 +32,11 @@
                 <type>pom</type>
             </dependency>
             <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.5.3</version>
+            </dependency>
+            <dependency>
                 <groupId>de.qaware.theo.mission-control</groupId>
                 <artifactId>mission-control-core</artifactId>
                 <version>${project.version}</version>

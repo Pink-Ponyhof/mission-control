@@ -1,5 +1,8 @@
 package de.qaware.theo.mc.gui;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.qaware.theo.mc.MissionController;
 import de.qaware.theo.mc.gui.model.DataModel;
 import de.qaware.theo.mc.model.Metadata;
@@ -7,11 +10,9 @@ import de.qaware.theo.mc.model.Metadata;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,8 @@ public class ConfigurationResource {
     @Inject
     private MissionController missionController;
 
+    @Inject
+    private ObjectMapper objectMapper;
 
     private Map<String, Map<String, String>> allConfigurations;
 
@@ -45,12 +48,23 @@ public class ConfigurationResource {
 
 
     @GET
-    @Produces({"application/json", "application/xml"})
-    public Response getConfiguration(@PathParam("configurationName") String name) {
+    @Produces({"application/json"})
+    public Response getConfiguration(@PathParam("configurationName") String name) throws JsonProcessingException {
         Map<String, String> configValues = allConfigurations.get(name);
         if (configValues == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        return Response.ok(new DataModel(name, configValues)).build();
+        DataModel entity = new DataModel(name, configValues);
+        return Response.ok(objectMapper.writeValueAsBytes(entity)).build();
+    }
+
+    @POST
+    @Consumes({"application/json"})
+    public Response setConfiguration(@PathParam("configurationName") String name, String jsonString) throws IOException {
+        Map<String, String> configuration = objectMapper.readValue(jsonString, new TypeReference<Map<String, String>>() {
+        });
+
+        System.out.println("The values: " + configuration);
+        return Response.ok().build();
     }
 }
