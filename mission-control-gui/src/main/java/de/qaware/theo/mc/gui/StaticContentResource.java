@@ -1,5 +1,6 @@
 package de.qaware.theo.mc.gui;
 
+import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -13,6 +14,7 @@ import java.util.Calendar;
  * @author andreas.janning
  */
 @Path("/static")
+@Singleton
 public class StaticContentResource {
 
     @Path("{path:js/.*}")

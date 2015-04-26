@@ -1,8 +1,12 @@
 package de.qaware.theo.mc.gui;
 
+import de.qaware.theo.mc.MissionController;
 import de.qaware.theo.mc.gui.model.MetadataModel;
 import de.qaware.theo.mc.model.Metadata;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -19,14 +23,17 @@ import java.util.List;
  * @author andreas.janning
  */
 @Path("/")
+@Singleton
 public class OverviewResource {
 
     private List<Metadata> allMetadata;
 
-    public OverviewResource() {
-        allMetadata = new ArrayList<>();
-        allMetadata.add(new Metadata("numberOne", "O:/config/numberOne.properties", Arrays.asList("TheStuff", "MoreStuff")));
-        allMetadata.add(new Metadata("numberTwo", "O:/config/numberTwo.properties", Arrays.asList("numberOfPonies", "PonyHappiness")));
+    @Inject
+    private MissionController missionController;
+
+    @PostConstruct
+    public void init(){
+        allMetadata = missionController.allConfigMetadata();
     }
 
     @GET
