@@ -1,9 +1,11 @@
 package de.qaware.theo.mc.cdi;
 
+import de.qaware.theo.mc.ConfigStore;
 import de.qaware.theo.mc.MissionController;
 import de.qaware.theo.mc.annotation.ConfigKey;
 import de.qaware.theo.mc.annotation.Configuration;
 import de.qaware.theo.mc.model.Metadata;
+import de.qaware.theo.mc.store.PropertiesStore;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.*;
@@ -60,7 +62,11 @@ public class ConfigurationInjector implements Extension {
      */
     void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager bm) {
         for (Map.Entry<AnnotatedType<?>, Metadata> entry : configs.entrySet()) {
-            abd.addBean(new ConfigurationProxy(entry.getKey(), entry.getValue()));
+            Metadata metadata = entry.getValue();
+            ConfigStore configStore = new PropertiesStore(metadata);
+            missionController.addConfigStore(metadata.getName(), configStore);
+
+            abd.addBean(new ConfigurationProxy(entry.getKey(), metadata, configStore));
             LOGGER.info("Added bean as proxy for " + entry.getKey());
         }
         abd.addBean(new MissionControlBean(missionController));

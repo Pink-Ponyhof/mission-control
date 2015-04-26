@@ -37,10 +37,10 @@ public class ConfigurationProxy implements Bean {
     private final Metadata metadata;
     private ConfigStore store;
 
-    ConfigurationProxy(AnnotatedType type, Metadata metadata) {
+    ConfigurationProxy(AnnotatedType type, Metadata metadata, ConfigStore store) {
         this.type = type;
         this.metadata = metadata;
-        this.store = new PropertiesStore(metadata);
+        this.store = store;
     }
 
     @Override

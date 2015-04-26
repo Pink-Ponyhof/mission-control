@@ -24,7 +24,14 @@ public class PropertiesStore implements ConfigStore {
 
     @Override
     public Map<String, String> getConfigValues() {
-        return null;
+        Map<String, String> configValues = null;
+        try {
+            configValues = reader.read();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return configValues;
     }
 
     @Override
