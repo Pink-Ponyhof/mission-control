@@ -1,0 +1,9 @@
+<div ng-controller="OverviewCtrl">
+    <h2 id="header">Configuration Overview</h2>
+
+    <ul>
+        <li ng-repeat="config in configurations">
+            <a href="#{{config.name}}">{{config.name}}</a>
+        </li>
+    </ul>
+</div>

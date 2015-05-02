@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.qaware.theo.mc.MissionController;
+import de.qaware.theo.mc.gui.model.ConfigEntryModel;
 import de.qaware.theo.mc.gui.model.DataModel;
 import de.qaware.theo.mc.model.Metadata;
 
@@ -62,12 +63,17 @@ public class ConfigurationResource {
     @POST
     @Consumes({"application/json"})
     public Response setConfiguration(@PathParam("configurationName") String name, String jsonString) throws IOException {
-        Map<String, String> configuration = objectMapper.readValue(jsonString, new TypeReference<Map<String, String>>() {
+        List<ConfigEntryModel> configModel = objectMapper.readValue(jsonString, new TypeReference<List<ConfigEntryModel>>() {
         });
 
         if (!allConfigurations.containsKey(name)) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+        Map<String, String> configuration = new HashMap<>();
+        for(ConfigEntryModel entry : configModel){
+            configuration.put(entry.getKey(), entry.getValue());
+        }
+
         allConfigurations.put(name, configuration);
 
         DataModel entity = new DataModel(name, configuration);

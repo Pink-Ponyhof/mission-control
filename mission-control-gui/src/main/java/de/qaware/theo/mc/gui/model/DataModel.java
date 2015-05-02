@@ -1,5 +1,7 @@
 package de.qaware.theo.mc.gui.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -9,7 +11,7 @@ public class DataModel {
 
     private String name;
 
-    private Map<String, String> configValues;
+    private List<ConfigEntryModel> configValues;
 
 
     public DataModel() {
@@ -17,22 +19,26 @@ public class DataModel {
 
     public DataModel(String name, Map<String, String> configValues) {
         this.name = name;
-        this.configValues = configValues;
+        this.configValues = new ArrayList<>(configValues.size());
+        for(Map.Entry<String, String> entry : configValues.entrySet()){
+            this.configValues.add(new ConfigEntryModel(entry.getKey(), entry.getValue()));
+        }
     }
 
     public String getName() {
         return name;
     }
 
-    public Map<String, String> getConfigValues() {
-        return configValues;
-    }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setConfigValues(Map<String, String> configValues) {
+    public List<ConfigEntryModel> getConfigValues() {
+        return configValues;
+    }
+
+    public void setConfigValues(List<ConfigEntryModel> configValues) {
         this.configValues = configValues;
     }
 

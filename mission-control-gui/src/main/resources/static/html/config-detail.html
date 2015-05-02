@@ -1,0 +1,9 @@
+<h2>{{config.name}}</h2>
+
+<div ng-repeat="entry in config.configValues">
+    <label for="{{entry.key}}">{{entry.key}}</label> <input type="text" id="{{entry.key}}" ng-model="entry.value">
+</div>
+<input type="button" value="submit" ng-click="submitValues()">
+<br/>
+<a href="#/">back</a>
+

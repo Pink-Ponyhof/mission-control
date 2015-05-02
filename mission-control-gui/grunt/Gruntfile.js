@@ -64,7 +64,7 @@ module.exports = function (grunt) {
     grunt.registerTask('test', ['jshint', 'karma']);
 
 
-    grunt.registerTask('dev', ['jshint', 'karma', 'uglify']);
+    grunt.registerTask('dev', ['clean', 'jshint', 'uglify']);
     // später den "jasmine" task aufsplitten in "nur testen" und "coverage messen"
     //   => dev (nur testen), build (dev + coverage)
     grunt.registerTask('build', ['dev']);
