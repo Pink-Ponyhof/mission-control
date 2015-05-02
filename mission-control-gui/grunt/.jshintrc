@@ -105,7 +105,7 @@
 
   // Custom Globals
   "globals": {
-    "mc": false
+    "angular": true
   }
   // additional predefined global variables
 }

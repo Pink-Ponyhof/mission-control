@@ -4,13 +4,10 @@ module.exports = function (grunt) {
         pattern: ['grunt-contrib-*']
     });
 
+    grunt.loadNpmTasks('grunt-karma');
+
     var sources = [
-        '../src/main/javascript/mc.js',
-        '../src/main/javascript/utility/**/*.js',
-        '../src/main/javascript/backend/**/*.js',
-        '../src/main/javascript/views/**/*.js',
-        '../src/main/javascript/controllers/**/*.js',
-        '../src/main/javascript/app.js'
+        '../src/main/javascript/*.js'
     ];
 
     grunt.initConfig({
@@ -22,38 +19,39 @@ module.exports = function (grunt) {
             mc: sources
         },
 
-        //jasmine: {
-        //    mc: {
-        //        src: sources,
-        //        options: {
-        //            specs: '../src/test/javascript/**/*.spec.js',
-        //            vendor: [
-        //                '../src/main/resources/custom/static/js/jquery-2.1.3.min.js'
-        //            ],
-        //            display: 'short',
-        //            summary: true,
-        //            template: require('grunt-template-jasmine-istanbul'),
-        //            templateOptions: {
-        //                coverage: '../target/jasmine-istanbul/coverage/coverage.json',
-        //                report: '../target/jasmine-istanbul/coverage'
-        //            }
-        //        }
-        //    }
-        //},
-
-        concat: {
-            options: {
-                separator: ';'
+        uglify:{
+            options:{
+                beautify : true
             },
-            dist: {
-                src: sources,
-                dest: '../target/generated-resources/static/js/mc.min.js'
+            mc: {
+                files:[{
+                    expand: true,
+                    cwd:'../src/main/javascript',
+                    src: '**/*.js',
+                    dest: '../target/generated-resources/static/js'
+                }]
+            }
+        },
+
+        karma: {
+            unit: {
+                options: {
+                    frameworks: ['jasmine'],
+                    singleRun: true,
+                    browsers: ['PhantomJS'],
+                    files: [
+                        '../src/main/resources/static/js/angular.min.js',
+                        '../src/main/resources/static/js/angular-mocks.js',
+                        '../src/main/javascript/*.js',
+                        '../src/test/javascript/*.js'
+                    ]
+                }
             }
         },
 
         watch: {
             mc: {
-                files: ['.jshintrc', sources, '../src/test/javascript/**/*.js'],
+                files: ['.jshintrc', '../src/main/javascript/*.js', '../src/test/javascript/*.js'],
                 tasks: ['dev']
             }
         },
@@ -63,7 +61,10 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('dev', ['jshint', 'clean', 'concat']);
+    grunt.registerTask('test', ['jshint', 'karma']);
+
+
+    grunt.registerTask('dev', ['jshint', 'karma', 'uglify']);
     // später den "jasmine" task aufsplitten in "nur testen" und "coverage messen"
     //   => dev (nur testen), build (dev + coverage)
     grunt.registerTask('build', ['dev']);
