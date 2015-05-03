@@ -30,9 +30,6 @@ module.exports = function (grunt) {
         },
 
         uglify: {
-            options: {
-                beautify: true
-            },
             mc: {
                 files: [{
                     expand: true,
