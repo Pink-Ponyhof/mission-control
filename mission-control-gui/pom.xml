@@ -51,6 +51,15 @@
                         <goals>
                             <goal>grunt</goal>
                         </goals>
+                        <configuration>
+                            <arguments>build-skip-tests</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>karma test</id>
+                        <goals>
+                            <goal>karma</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

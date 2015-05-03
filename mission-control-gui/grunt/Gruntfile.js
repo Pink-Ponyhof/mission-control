@@ -43,16 +43,7 @@ module.exports = function (grunt) {
         karma: {
             unit: {
                 options: {
-                    frameworks: ['jasmine'],
-                    singleRun: true,
-                    browsers: ['PhantomJS'],
-                    files: [
-                        '../target/bower/static/js/angular/angular.min.js',
-                        '../target/bower/static/js/angular-mocks/angular-mocks.js',
-                        '../target/bower/static/js/angular-route/angular-route.min.js',
-                        '../src/main/javascript/*.js',
-                        '../src/test/javascript/*.js'
-                    ]
+                    configFile: 'karma.conf.js'
                 }
             }
         },
@@ -84,6 +75,8 @@ module.exports = function (grunt) {
     grunt.registerTask('test', ['karma']);
 
     grunt.registerTask('build', ['bower','jshint','test', 'uglify']);
+
+    grunt.registerTask('build-skip-tests', ['bower','jshint','uglify']);
 
     grunt.registerTask('default', ['build']);
 
