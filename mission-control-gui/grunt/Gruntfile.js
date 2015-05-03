@@ -58,8 +58,20 @@ module.exports = function (grunt) {
         },
 
         watch: {
-            mc: {
+            jshint: {
                 files: ['.jshintrc', '../src/main/javascript/*.js', '../src/test/javascript/*.js'],
+                tasks: ['jshint']
+            },
+            test: {
+                files: ['../src/test/javascript/*.js'],
+                tasks: ['test']
+            },
+            bower: {
+                files: ['bower.json'],
+                tasks: ['build']
+            },
+            src: {
+                files: ['../src/main/javascript/*.js'],
                 tasks: ['build']
             }
         },
