@@ -60,7 +60,7 @@ module.exports = function (grunt) {
         watch: {
             mc: {
                 files: ['.jshintrc', '../src/main/javascript/*.js', '../src/test/javascript/*.js'],
-                tasks: ['dev']
+                tasks: ['build']
             }
         },
 
