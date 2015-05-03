@@ -2,7 +2,7 @@ describe('OverviewCtrl', function () {
 
     var scope, ctrl, $httpBackend;
 
-    beforeEach(module('missionControlApp'));
+    beforeEach(module('mcControllers'));
 
     beforeEach(inject(function (_$httpBackend_, $rootScope, $controller) {
         scope = $rootScope.$new();
@@ -10,7 +10,7 @@ describe('OverviewCtrl', function () {
         ctrl = $controller('OverviewCtrl', {$scope: scope, $httpBackend: $httpBackend});
     }));
 
-    it('should create "configurations" model with 2 configurations', inject(function (_$httpBackend_, $rootScope, $controller) {
+    it('should get the current configurations on startup', function () {
         $httpBackend.expectGET('../../')
             .respond([
                 {'name': 'Fancy'},
@@ -18,6 +18,6 @@ describe('OverviewCtrl', function () {
             ]);
         $httpBackend.flush();
         expect(scope.configurations.length).toBe(2);
-    }));
+    });
 
 });
