@@ -1,16 +1,26 @@
 module.exports = function (grunt) {
 
     require('load-grunt-tasks')(grunt, {
-        pattern: ['grunt-contrib-*']
+        pattern: ['grunt-contrib-*', 'grunt-karma', 'grunt-bower-task']
     });
 
-    grunt.loadNpmTasks('grunt-karma');
 
     var sources = [
         '../src/main/javascript/*.js'
     ];
 
     grunt.initConfig({
+
+        bower: {
+            install: {
+                options: {
+                    targetDir: '../target/bower/static/',
+                    install: true,
+                    layout: 'byType'
+                }
+            }
+        },
+
         jshint: {
             options: {
                 force: true,
@@ -19,14 +29,14 @@ module.exports = function (grunt) {
             mc: sources
         },
 
-        uglify:{
-            options:{
-                beautify : true
+        uglify: {
+            options: {
+                beautify: true
             },
             mc: {
-                files:[{
+                files: [{
                     expand: true,
-                    cwd:'../src/main/javascript',
+                    cwd: '../src/main/javascript',
                     src: '**/*.js',
                     dest: '../target/generated-resources/static/js'
                 }]
@@ -40,8 +50,9 @@ module.exports = function (grunt) {
                     singleRun: true,
                     browsers: ['PhantomJS'],
                     files: [
-                        '../src/main/resources/static/js/angular.min.js',
-                        '../src/main/resources/static/js/angular-mocks.js',
+                        '../target/bower/static/js/angular/angular.min.js',
+                        '../target/bower/static/js/angular-mocks/angular-mocks.js',
+                        '../target/bower/static/js/angular-route/angular-route.min.js',
                         '../src/main/javascript/*.js',
                         '../src/test/javascript/*.js'
                     ]
@@ -61,13 +72,9 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('test', ['jshint', 'karma']);
+    grunt.registerTask('test', ['karma']);
 
-
-    grunt.registerTask('dev', ['clean', 'jshint', 'uglify']);
-    // später den "jasmine" task aufsplitten in "nur testen" und "coverage messen"
-    //   => dev (nur testen), build (dev + coverage)
-    grunt.registerTask('build', ['dev']);
+    grunt.registerTask('build', ['bower','jshint','test', 'uglify']);
 
     grunt.registerTask('default', ['build']);
 

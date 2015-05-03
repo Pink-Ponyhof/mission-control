@@ -15,6 +15,9 @@
     <build>
         <resources>
             <resource>
+                <directory>${project.basedir}/target/bower</directory>
+            </resource>
+            <resource>
                 <directory>${project.basedir}/target/generated-resources</directory>
             </resource>
         </resources>
