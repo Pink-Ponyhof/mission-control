@@ -34,7 +34,7 @@ public class ConfigurationResource {
     @GET
     @Produces({"application/json"})
     public Response getConfiguration(@PathParam("configurationName") String name) throws JsonProcessingException, ConfigurationNotAccessibleException {
-        if (missionController.configExists(name)) {
+        if (!missionController.configExists(name)) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         Map<String, String> configValues;
@@ -50,7 +50,7 @@ public class ConfigurationResource {
         List<ConfigEntryModel> configModel = objectMapper.readValue(jsonString, new TypeReference<List<ConfigEntryModel>>() {
         });
 
-        if (missionController.configExists(name)) {
+        if (!missionController.configExists(name)) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         Map<String, String> configuration = new HashMap<>();
