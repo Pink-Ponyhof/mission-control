@@ -1,15 +1,13 @@
 package de.qaware.theo.mc.gui;
 
-import de.qaware.theo.mc.ConfigurationNotAccessibleException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.qaware.theo.mc.ConfigurationNotAccessibleException;
 import de.qaware.theo.mc.MissionController;
 import de.qaware.theo.mc.gui.model.ConfigEntryModel;
 import de.qaware.theo.mc.gui.model.DataModel;
-import de.qaware.theo.mc.model.Metadata;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.*;
@@ -33,48 +31,34 @@ public class ConfigurationResource {
     @Inject
     private ObjectMapper objectMapper;
 
-    private Map<String, Map<String, String>> allConfigurations;
-
-    @PostConstruct
-    public void init() throws ConfigurationNotAccessibleException {
-        List<Metadata> metadatas = missionController.allConfigMetadata();
-
-        allConfigurations = new HashMap<>(metadatas.size());
-
-        for (Metadata metadata : metadatas) {
-            String name = metadata.getName();
-            Map<String, String> configValues = missionController.getConfigValues(name);
-            allConfigurations.put(name, configValues);
-        }
-    }
-
-
     @GET
     @Produces({"application/json"})
-    public Response getConfiguration(@PathParam("configurationName") String name) throws JsonProcessingException {
-        Map<String, String> configValues = allConfigurations.get(name);
-        if (configValues == null) {
+    public Response getConfiguration(@PathParam("configurationName") String name) throws JsonProcessingException, ConfigurationNotAccessibleException {
+        if (missionController.configExists(name)) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+        Map<String, String> configValues;
+        configValues = missionController.getConfigValues(name);
+
         DataModel entity = new DataModel(name, configValues);
         return Response.ok(objectMapper.writeValueAsBytes(entity)).build();
     }
 
     @POST
     @Consumes({"application/json"})
-    public Response setConfiguration(@PathParam("configurationName") String name, String jsonString) throws IOException {
+    public Response setConfiguration(@PathParam("configurationName") String name, String jsonString) throws IOException, ConfigurationNotAccessibleException {
         List<ConfigEntryModel> configModel = objectMapper.readValue(jsonString, new TypeReference<List<ConfigEntryModel>>() {
         });
 
-        if (!allConfigurations.containsKey(name)) {
+        if (missionController.configExists(name)) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         Map<String, String> configuration = new HashMap<>();
-        for(ConfigEntryModel entry : configModel){
+        for (ConfigEntryModel entry : configModel) {
             configuration.put(entry.getKey(), entry.getValue());
         }
 
-        allConfigurations.put(name, configuration);
+        missionController.setConfigValues(name, configuration);
 
         DataModel entity = new DataModel(name, configuration);
         return Response.ok(objectMapper.writeValueAsBytes(entity)).build();

@@ -6,7 +6,6 @@ import de.qaware.theo.mc.MissionController;
 import de.qaware.theo.mc.gui.model.MetadataModel;
 import de.qaware.theo.mc.model.Metadata;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.GET;
@@ -25,24 +24,18 @@ import java.util.List;
 @Singleton
 public class OverviewResource {
 
-    private List<Metadata> allMetadata;
-
     @Inject
     private MissionController missionController;
 
     @Inject
     private ObjectMapper objectMapper;
 
-    @PostConstruct
-    public void init(){
-        allMetadata = missionController.allConfigMetadata();
-    }
 
     @GET
     @Produces({"application/json"})
     public byte[] getAllConfigurations(@Context UriInfo uriInfo) throws JsonProcessingException {
+        List<Metadata> allMetadata = missionController.allConfigMetadata();
         List<MetadataModel> result = new ArrayList<>(allMetadata.size());
-
         for (Metadata metadata : allMetadata) {
             URI path = uriInfo.getRequestUriBuilder().path(metadata.getName()).build();
             result.add(new MetadataModel(metadata, path));
