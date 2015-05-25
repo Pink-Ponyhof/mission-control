@@ -55,6 +55,10 @@ public class MissionController {
         }
     }
 
+    public boolean configExists(String name) {
+        return configStoreMap.get(name)!= null;
+    }
+
     public void setConfigValues(String configName, Map<String, String> newValues) throws ConfigurationNotAccessibleException {
         ConfigStore configStore = configStoreMap.get(configName);
         if (configStore != null) {
