@@ -81,7 +81,12 @@ public class PropertiesStore implements ConfigStore {
     }
 
     @Override
-    public void setConfigValues(Map<String, String> newValues) {
-        throw new UnsupportedOperationException();
+    public void setConfigValues(Map<String, String> newValues) throws ConfigurationNotAccessibleException {
+        try {
+            reader.write(newValues);
+        }
+        catch (IOException e) {
+            throw new ConfigurationNotAccessibleException("Could not write properties");
+        }
     }
 }

@@ -34,6 +34,6 @@ public interface ConfigStore {
      * this key-value pair will be ignored.
      * @param newValues the new key value pairs of the config.
      */
-    void setConfigValues(Map<String, String> newValues);
+    void setConfigValues(Map<String, String> newValues) throws ConfigurationNotAccessibleException;
 
 }

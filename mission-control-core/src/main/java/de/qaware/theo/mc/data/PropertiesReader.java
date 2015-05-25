@@ -1,5 +1,6 @@
 package de.qaware.theo.mc.data;
 
+import com.sun.corba.se.impl.encoding.OSFCodeSetRegistry;
 import de.qaware.theo.mc.model.Metadata;
 
 import java.io.*;
@@ -43,6 +44,13 @@ public class PropertiesReader {
             generatePropertiesFile();
         }
         return propertiesMap;
+    }
+
+    public void write(Map<String, String> propertiesMap) throws IOException {
+        Properties properties = new Properties();
+        properties.putAll(propertiesMap);
+
+        writeProperties(properties);
     }
 
     private void generatePropertiesFile() throws IOException {

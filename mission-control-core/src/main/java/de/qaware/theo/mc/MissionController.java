@@ -11,6 +11,7 @@ import java.util.Map;
 /**
  * The information source for application.
  * The {@link MissionController} can be injected and given access to all requested information in the application.
+ *
  * @author andreas.janning
  */
 public class MissionController {
@@ -23,6 +24,7 @@ public class MissionController {
 
     /**
      * Add the given configuration metadata to the metadata map.
+     *
      * @param metadata the metadata to be added
      */
     public void addMetadata(Metadata metadata) {
@@ -38,6 +40,7 @@ public class MissionController {
 
     /**
      * Get the key value pairs for the configuration with the given name
+     *
      * @param configName the name annotation of the configuration for whicht the key value pairs are requested.
      * @return the key value map for the given config
      * @throws ConfigurationNotAccessibleException if the values could not be retrieved
@@ -46,19 +49,27 @@ public class MissionController {
         ConfigStore configStore = configStoreMap.get(configName);
         if (configStore != null) {
             return configStore.getConfigValues();
-        } else {
+        }
+        else {
             throw new IllegalArgumentException("No config with name " + configName + " found.");
         }
     }
 
-    public void setConfigValues(String configName, Map<String, String> newValues) {
-        throw new UnsupportedOperationException("not yet implemented");
+    public void setConfigValues(String configName, Map<String, String> newValues) throws ConfigurationNotAccessibleException {
+        ConfigStore configStore = configStoreMap.get(configName);
+        if (configStore != null) {
+            configStore.setConfigValues(newValues);
+        }
+        else {
+            throw new IllegalArgumentException("No config with name " + configName + " found.");
+        }
     }
 
     /**
      * Add a config store to the controller.
+     *
      * @param configName the name of the config for which the config store holds the values
-     * @param store the config store to be added to the ones handled by the controller
+     * @param store      the config store to be added to the ones handled by the controller
      */
     public void addConfigStore(String configName, ConfigStore store) {
         configStoreMap.put(configName, store);
