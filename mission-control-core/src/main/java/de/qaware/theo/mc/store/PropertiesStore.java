@@ -7,6 +7,7 @@ import de.qaware.theo.mc.model.Metadata;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  * The {@link ConfigStore} implementation when the config is given as properties file.
@@ -19,10 +20,26 @@ public class PropertiesStore implements ConfigStore {
     public static final String NO_VALUE_FOUND = "";
     private PropertiesFileOperator reader;
     private Metadata metadata;
+    private ScheduledExecutorService executorService;
 
     public PropertiesStore(Metadata metadata) {
         this.reader = new PropertiesFileOperator(metadata);
         this.metadata = metadata;
+        this.executorService = Executors.newSingleThreadScheduledExecutor();
+        schedule();
+
+    }
+
+    private void schedule() {
+        ScheduledFuture scheduledFuture =
+                executorService.scheduleWithFixedDelay(new Runnable() {
+                                                           public void run() {
+                                                               System.out.println("Executed!");
+                                                           }
+                                                       },
+                        0,
+                        5,
+                        TimeUnit.SECONDS);
     }
 
     /**
@@ -31,11 +48,14 @@ public class PropertiesStore implements ConfigStore {
     PropertiesStore(Metadata metadata, PropertiesFileOperator reader) {
         this.reader = reader;
         this.metadata = metadata;
+        this.executorService = Executors.newSingleThreadScheduledExecutor();
+        schedule();
     }
 
     /**
      * Reads the properties file and retrieves a map of key value pairs.
      * If the file does not exist, the file is created with empty values.
+     *
      * @return the map of key value pairs in the config's properties file.
      * @throws ConfigurationNotAccessibleException if an error occured when reading the file
      */
@@ -57,6 +77,7 @@ public class PropertiesStore implements ConfigStore {
      * Check whether the given key is a valid key in the configuration.
      * If it is, read the properties file and get the value for the given key.
      * If the file does not specify a value for the given key, an empty String is returned.
+     *
      * @param key the key to get the value for
      * @return the value corresponding to the key.
      */
