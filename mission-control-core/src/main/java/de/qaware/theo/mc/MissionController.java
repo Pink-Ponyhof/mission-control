@@ -55,6 +55,10 @@ public class MissionController {
         }
     }
 
+    /**
+     * @param name the name of the config to check
+     * @return true if a config with the given name is stored, false otherwise
+     */
     public boolean configExists(String name) {
         return configStoreMap.get(name)!= null;
     }
