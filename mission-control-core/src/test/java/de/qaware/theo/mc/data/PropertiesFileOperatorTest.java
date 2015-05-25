@@ -1,15 +1,12 @@
 package de.qaware.theo.mc.data;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.*;
 
-import de.qaware.theo.mc.data.PropertiesReader;
 import de.qaware.theo.mc.model.Metadata;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -17,18 +14,17 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 
 /**
- * The unit test class for {@link PropertiesReader}
+ * The unit test class for {@link PropertiesFileOperator}
  *
  * @author s.wittke
  */
 
-public class PropertiesReaderTest {
+public class PropertiesFileOperatorTest {
 
     private List<String> containedKeys;
     private String configFilePath;
@@ -53,7 +49,7 @@ public class PropertiesReaderTest {
     @Test
     public void testReadAllPropertiesExistingInFile() throws Exception {
         Metadata metadata = new Metadata("testConfig", configFilePath, containedKeys);
-        PropertiesReader reader = new PropertiesReader(metadata);
+        PropertiesFileOperator reader = new PropertiesFileOperator(metadata);
 
         Map<String, String> properties = reader.read();
         assertThat(properties.size(), is(equalTo(5)));
@@ -74,7 +70,7 @@ public class PropertiesReaderTest {
         containedKeys.remove("empty.value");
         containedKeys.add("key.not.in.file");
 
-        PropertiesReader reader = new PropertiesReader(metadata);
+        PropertiesFileOperator reader = new PropertiesFileOperator(metadata);
 
         Map<String, String> properties = reader.read();
         assertThat(properties.size(), is(equalTo(2)));
@@ -94,7 +90,7 @@ public class PropertiesReaderTest {
 
         Metadata metadata = new Metadata("testConfig", path, containedKeys);
 
-        PropertiesReader reader = new PropertiesReader(metadata);
+        PropertiesFileOperator reader = new PropertiesFileOperator(metadata);
         Map<String, String> properties = reader.read();
 
         File file = new File(path);

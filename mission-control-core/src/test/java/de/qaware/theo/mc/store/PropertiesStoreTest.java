@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 import de.qaware.theo.mc.ConfigurationNotAccessibleException;
-import de.qaware.theo.mc.data.PropertiesReader;
+import de.qaware.theo.mc.data.PropertiesFileOperator;
 import de.qaware.theo.mc.model.Metadata;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +25,7 @@ import java.util.*;
 public class PropertiesStoreTest {
 
     @Mock
-    private PropertiesReader propertiesReader;
+    private PropertiesFileOperator propertiesFileOperator;
 
     private List<String> configKeys;
     private Metadata metadata;
@@ -40,7 +40,7 @@ public class PropertiesStoreTest {
         configKeys.add("first.key");
         configKeys.add("second.key");
         metadata = new Metadata("config", "fileName", configKeys);
-        store = new PropertiesStore(metadata, propertiesReader);
+        store = new PropertiesStore(metadata, propertiesFileOperator);
 
         expectedResult = new HashMap<>();
         expectedResult.put("first.key", "first.value");
@@ -50,7 +50,7 @@ public class PropertiesStoreTest {
     @Test
     public void testGetConfigValuesSuccessful() throws Exception {
 
-        when(propertiesReader.read()).thenReturn(expectedResult);
+        when(propertiesFileOperator.read()).thenReturn(expectedResult);
 
         Map<String, String> result = store.getConfigValues();
         assertThat(result.size(), is(equalTo(2)));
@@ -60,13 +60,13 @@ public class PropertiesStoreTest {
 
     @Test(expected = ConfigurationNotAccessibleException.class)
     public void testGetConfigValuesErrorInReader() throws Exception {
-        when(propertiesReader.read()).thenThrow(ConfigurationNotAccessibleException.class);
+        when(propertiesFileOperator.read()).thenThrow(ConfigurationNotAccessibleException.class);
         store.getConfigValues();
     }
 
     @Test
     public void testGetConfigValueSuccessful() throws Exception {
-        when(propertiesReader.read()).thenReturn(expectedResult);
+        when(propertiesFileOperator.read()).thenReturn(expectedResult);
 
         String key = "first.key";
         String configValue = store.getConfigValue(key);
@@ -84,8 +84,8 @@ public class PropertiesStoreTest {
     public void testGetConfigValueNotSet() throws Exception {
         configKeys.add("third.key");
         metadata = new Metadata("config", "fileName", configKeys);
-        store = new PropertiesStore(metadata, propertiesReader);
-        when(propertiesReader.read()).thenReturn(expectedResult);
+        store = new PropertiesStore(metadata, propertiesFileOperator);
+        when(propertiesFileOperator.read()).thenReturn(expectedResult);
 
         String key = "third.key";
         String configValue = store.getConfigValue(key);
@@ -94,7 +94,7 @@ public class PropertiesStoreTest {
 
     @Test(expected = ConfigurationNotAccessibleException.class)
     public void testGetConfigValueErrorInReader() throws Exception {
-        when(propertiesReader.read()).thenThrow(ConfigurationNotAccessibleException.class);
+        when(propertiesFileOperator.read()).thenThrow(ConfigurationNotAccessibleException.class);
         store.getConfigValue("first.key");
     }
 

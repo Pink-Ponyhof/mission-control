@@ -2,9 +2,8 @@ package de.qaware.theo.mc.store;
 
 import de.qaware.theo.mc.ConfigStore;
 import de.qaware.theo.mc.ConfigurationNotAccessibleException;
-import de.qaware.theo.mc.data.PropertiesReader;
+import de.qaware.theo.mc.data.PropertiesFileOperator;
 import de.qaware.theo.mc.model.Metadata;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.Map;
@@ -18,18 +17,18 @@ import java.util.Map;
 public class PropertiesStore implements ConfigStore {
 
     public static final String NO_VALUE_FOUND = "";
-    private PropertiesReader reader;
+    private PropertiesFileOperator reader;
     private Metadata metadata;
 
     public PropertiesStore(Metadata metadata) {
-        this.reader = new PropertiesReader(metadata);
+        this.reader = new PropertiesFileOperator(metadata);
         this.metadata = metadata;
     }
 
     /**
      * Protected constructor for tests only.
      */
-    PropertiesStore(Metadata metadata, PropertiesReader reader) {
+    PropertiesStore(Metadata metadata, PropertiesFileOperator reader) {
         this.reader = reader;
         this.metadata = metadata;
     }
