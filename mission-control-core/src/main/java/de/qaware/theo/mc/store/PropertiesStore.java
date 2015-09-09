@@ -8,6 +8,7 @@ import de.qaware.theo.mc.model.Metadata;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.logging.Logger;
 
 /**
  * The {@link ConfigStore} implementation when the config is given as properties file.
@@ -17,39 +18,50 @@ import java.util.concurrent.*;
  */
 public class PropertiesStore implements ConfigStore {
 
+    private static final Logger LOGGER = Logger.getLogger(PropertiesStore.class.getName());
+
     public static final String NO_VALUE_FOUND = "";
-    private PropertiesFileOperator reader;
+    private PropertiesFileOperator operator;
     private Metadata metadata;
+    private volatile Map<String, String> cachedConfig;
     private ScheduledExecutorService executorService;
 
-    public PropertiesStore(Metadata metadata) {
-        this.reader = new PropertiesFileOperator(metadata);
+    public PropertiesStore(Metadata metadata) throws ConfigurationNotAccessibleException {
+        this.operator = new PropertiesFileOperator(metadata);
         this.metadata = metadata;
         this.executorService = Executors.newSingleThreadScheduledExecutor();
-        schedule();
 
+        init();
     }
 
-    private void schedule() {
-        ScheduledFuture scheduledFuture =
-                executorService.scheduleWithFixedDelay(new Runnable() {
-                                                           public void run() {
-                                                               System.out.println("Executed!");
-                                                           }
-                                                       },
-                        0,
-                        5,
-                        TimeUnit.SECONDS);
-    }
 
     /**
      * Protected constructor for tests only.
      */
-    PropertiesStore(Metadata metadata, PropertiesFileOperator reader) {
-        this.reader = reader;
+    PropertiesStore(Metadata metadata, PropertiesFileOperator operator) throws ConfigurationNotAccessibleException {
+        this.operator = operator;
         this.metadata = metadata;
         this.executorService = Executors.newSingleThreadScheduledExecutor();
-        schedule();
+        init();
+    }
+
+    private void init() throws ConfigurationNotAccessibleException {
+        long lastChange = initialRead();
+        schedule(lastChange);
+    }
+
+    private void schedule(long lastChange) {
+        executorService.scheduleWithFixedDelay(new Watchdog(lastChange), 5, 5, TimeUnit.SECONDS);
+    }
+
+    private long initialRead() throws ConfigurationNotAccessibleException {
+        try {
+            long lastChange = operator.lastChange();
+            cachedConfig = operator.read();
+            return lastChange;
+        } catch (IOException e ){
+            throw new ConfigurationNotAccessibleException("An error occured when reading properties file", e);
+        }
     }
 
     /**
@@ -61,16 +73,7 @@ public class PropertiesStore implements ConfigStore {
      */
     @Override
     public Map<String, String> getConfigValues() throws ConfigurationNotAccessibleException {
-        Map<String, String> configValues;
-
-        try {
-            configValues = reader.read();
-        }
-        catch (IOException e) {
-            throw new ConfigurationNotAccessibleException("An error occured when reading properties file", e);
-        }
-
-        return configValues;
+        return cachedConfig;
     }
 
     /**
@@ -86,27 +89,51 @@ public class PropertiesStore implements ConfigStore {
         if (!metadata.getKeys().contains(key)) {
             throw new IllegalArgumentException("Given key " + key + " is not allowed in config " + metadata.getName());
         }
-        try {
-            Map<String, String> configValues = reader.read();
-            if (configValues.containsKey(key)) {
-                return configValues.get(key);
-            }
-            else {
-                return NO_VALUE_FOUND;
-            }
-        }
-        catch (IOException e) {
-            throw new ConfigurationNotAccessibleException("Could not read or write properties file", e);
+        if (cachedConfig.containsKey(key)) {
+            return cachedConfig.get(key);
+        } else {
+            return NO_VALUE_FOUND;
         }
     }
 
     @Override
     public void setConfigValues(Map<String, String> newValues) throws ConfigurationNotAccessibleException {
         try {
-            reader.write(newValues);
-        }
-        catch (IOException e) {
+            operator.write(newValues);
+            cachedConfig = newValues;
+        } catch (IOException e) {
             throw new ConfigurationNotAccessibleException("Could not write properties");
+        }
+    }
+
+    /**
+     * ByPass Watchdog and reread configuration for testing purposes
+     *
+     * @throws IOException on errors reading the config file
+     */
+    void reReadConfiguration() throws IOException {
+        cachedConfig = operator.read();
+    }
+
+    private class Watchdog implements Runnable {
+
+        private long lastChange;
+
+        public Watchdog(long lastChange) {
+            this.lastChange = lastChange;
+        }
+
+        @Override
+        public void run() {
+            try {
+                long currentLastChange = operator.lastChange();
+                if (currentLastChange > lastChange) {
+                    cachedConfig = operator.read();
+                    lastChange = currentLastChange;
+                }
+            } catch (IOException e) {
+                LOGGER.severe("Unable to read config file " + metadata.getFileName());
+            }
         }
     }
 }

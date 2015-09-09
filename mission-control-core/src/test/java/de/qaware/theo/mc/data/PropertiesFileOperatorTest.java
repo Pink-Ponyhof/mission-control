@@ -13,6 +13,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,11 +40,7 @@ public class PropertiesFileOperatorTest {
         containedKeys.add("fifth.value");
 
         URL resource = getClass().getResource("/test.properties");
-        configFilePath = resource.getPath();
-
-
-
-
+        configFilePath = Paths.get(resource.toURI()).toString();
     }
 
     @Test

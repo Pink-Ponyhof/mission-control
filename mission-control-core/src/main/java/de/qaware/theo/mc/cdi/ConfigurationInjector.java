@@ -1,6 +1,7 @@
 package de.qaware.theo.mc.cdi;
 
 import de.qaware.theo.mc.ConfigStore;
+import de.qaware.theo.mc.ConfigurationNotAccessibleException;
 import de.qaware.theo.mc.MissionController;
 import de.qaware.theo.mc.annotation.ConfigKey;
 import de.qaware.theo.mc.annotation.Configuration;
@@ -60,7 +61,7 @@ public class ConfigurationInjector implements Extension {
     /**
      * Add all config beans and the mission controller bean s.th. they can be injected in the application
      */
-    void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager bm) {
+    void afterBeanDiscovery(@Observes AfterBeanDiscovery abd, BeanManager bm) throws ConfigurationNotAccessibleException {
         for (Map.Entry<AnnotatedType<?>, Metadata> entry : configs.entrySet()) {
             Metadata metadata = entry.getValue();
             ConfigStore configStore = new PropertiesStore(metadata);
